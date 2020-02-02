@@ -20,12 +20,15 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         VBox layout1 = new VBox(20);
         primaryStage.setTitle("Hello World");
+        //Create the button that will call the sort method.
         Button sort = new Button("Sort");
+        //Create the initial set of rectangles.
         array.makeRectangles();
         Group rectangles = new Group(array.getRectangles());
         layout1.getChildren().addAll(sort, rectangles);
         primaryStage.setScene(new Scene(layout1, 1800, 1000));
         primaryStage.show();
+        //Makes the button call the sort method.
         sort.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 array.sort();
