@@ -1,7 +1,7 @@
-package BubbleSort;
+package InsertionSort;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Rectangle;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,15 +14,9 @@ public class SortArray {
     private Random rand = new Random();
 
     //SortArray constructor initializes the array.
-    public SortArray() {
-        //Create new array of whatever size you want. I could potentially ask for user input here.
-        array = new int[100];
-        //Fill the array with random integers.
-        for (int i = 0; i < array.length; i++) {
-            array[i] = rand.nextInt(1001);
-        }
-        //Initialize the arrayLength variable, this is used in determining the size of the window if I don't set it.
-        arrayLength = array.length;
+    public SortArray(int[] array, Rectangle[] rectangles) {
+        this.array = array;
+        this.rectangles = rectangles;
     }
 
     //Display the Rectangles.
@@ -46,7 +40,7 @@ public class SortArray {
     }
 
     //Remakes the rectangles to account for the swap that has occurred.
-    public void remakeRectangles(int firstIndex, int secondIndex) {
+    public void remakeRectangles(int firstIndex, int secondIndex, int keyIndex) {
         //This loop functions identically to the one in the makeRectangles method.
         for (int i = 0; i < rectangles.length; i++) {
             rectangles[i].setX(i * 15);
@@ -58,17 +52,17 @@ public class SortArray {
         //Fill in the swapped rectangles red.
         rectangles[firstIndex].setFill(Color.RED);
         rectangles[secondIndex].setFill(Color.RED);
+        rectangles[keyIndex].setFill(Color.GREEN);
     }
 
     //This is the method that does the sorting.
-    public void bubbleSort() {
+    public void insertionSort() {
         //Declare and initialize the variable that tracks the number of swaps.
         AtomicInteger numOfSwaps = new AtomicInteger();
 
         //Create a new thread for the sorting algorithm to run on.
         new Thread(() -> {
-            //Do-while loop until there are no swaps after iterating through the entire array.
-            do {
+            /*do {
                 //Set the number of swaps to zero at the beginning of each array iteration.
                 numOfSwaps.set(0);
                 try {
@@ -86,8 +80,26 @@ public class SortArray {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while (numOfSwaps.get() != 0);
+            } while (numOfSwaps.get() != 0);*/
+            try {
+                for(int i = 0; i < array.length; i++) {
+                    //Store the currentInt and initialize j.
+                    int currentInt = array[i];
+                    int j = i - 1;
 
+                    //Move all elements greater than the currentInt up on position, to make room for the currentInt.
+                    while (j >= 0 && array[j] > currentInt) {
+                        //Call the swap method
+                        swap(j + 1, j, i);
+                        //Iterate towards the front of the array
+                        j--;
+                        //Pause the thread
+                        Thread.sleep(50);
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             //Make the first 2 rectangles black so they look the same as the other rectangles.
             rectangles[0].setFill(Color.BLACK);
             rectangles[1].setFill(Color.BLACK);
@@ -95,7 +107,7 @@ public class SortArray {
     }
 
     //Swap method
-    public void swap(int firstIndex, int secondIndex) {
+    public void swap(int firstIndex, int secondIndex, int keyIndex) {
         //Swap the array values
         int temp = array[firstIndex];
         array[firstIndex] = array[secondIndex];
@@ -106,7 +118,7 @@ public class SortArray {
         rectangles[secondIndex] = tempRectangle;
 
         //Repaint/remake the Rectangles to update if a swap if one occurred.
-        remakeRectangles(firstIndex, secondIndex);
+        remakeRectangles(firstIndex, secondIndex, keyIndex);
     }
 
     //Print out the array to the console.
@@ -125,7 +137,4 @@ public class SortArray {
     public Rectangle[] getRectangles() {
         return rectangles;
     }
-
-    //Return the int array
-    public int[] getArray() { return array; }
 }
